@@ -1,5 +1,6 @@
 package org.demo.rabbitmq.amqp;
 
+import com.rabbitmq.client.Address;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -10,10 +11,28 @@ public class Connect1Default {
 		ConnectionFactory factory = new ConnectionFactory();
 		System.out.println("ConnectionFactory created.");
 		
-//		Connection connection = factory.newConnection(Config.AMQP_URL);
-		// Connection with default values : localhost, 5672
-		Connection connection = factory.newConnection("MyConnectionName");
+		// Set default values for connections
+//		factory.setHost("localhost");
+//		factory.setPort(5672);
+		factory.setUsername("guest");
+		factory.setPassword("guest");
+		factory.setConnectionTimeout(2000);
+		// Convenience method for setting the fields in an AMQP URI: host, port, username, password and virtual host. 
+		// If any part of theURI is omitted, the ConnectionFactory's corresponding variable is left unchanged.
+//		factory.setUri("myhost");
+		
+		Connection connection ;
+		// Connection with single address with default values : localhost, 5672, etc (or factory defaults)
+//		connection = factory.newConnection("MyConnectionName");
 
+		// Connection with single address with specific values 
+//		Address[] address = { new Address("localhost", 5672) };
+//		connection = factory.newConnection(address);
+		
+		// Connection with multiple addresses (only 2nd addr is valid)
+		Address[] addresses = {new Address("192.168.1.4", 5672), new Address("localhost", 5672)};
+		connection = factory.newConnection(addresses);
+		
 		System.out.println("Connection ready : ");
 		// "id" : 
 		// This ID must be unique, otherwise some services like the metrics collector won't work properly. 
