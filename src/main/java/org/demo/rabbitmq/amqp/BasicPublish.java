@@ -1,5 +1,7 @@
 package org.demo.rabbitmq.amqp;
 
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.BasicProperties;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 
@@ -51,8 +53,14 @@ public class BasicPublish {
 		Tool.log("Publishing messages ");
 		for (int i = 1; i <= 40; i++) {
 			String message = "My super message via exchange #" + i;
+			AMQP.BasicProperties prop = new AMQP.BasicProperties.Builder()
+	            .contentType("text/plain")
+	            .deliveryMode(2)
+	            .priority(1)
+	            .userId("guest") // must be the authenticated user
+	            .build();
 		    // publish with (exchange, routingKey, properties, messageBody)
-		    channel.basicPublish("my-direct-exchange", "my-key12", null, message.getBytes());
+		    channel.basicPublish("my-direct-exchange", "my-key12", prop, message.getBytes());
 		}
 		Tool.log("Messages published.");
 		// if invalid exchange name : ShutdownSignalException : no exchange 'xxxx' in vhost '/',

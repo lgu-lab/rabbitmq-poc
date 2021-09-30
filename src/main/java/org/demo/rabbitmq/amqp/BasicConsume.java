@@ -1,5 +1,8 @@
 package org.demo.rabbitmq.amqp;
 
+import java.util.Map;
+
+import com.rabbitmq.client.BasicProperties;
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DeliverCallback;
@@ -22,13 +25,35 @@ public class BasicConsume {
 	    
 
 		DeliverCallback deliverCallback = (consumerTag, message) -> {
+		    Tool.log("-----");
 		    Tool.log("DeliverCallback : consumerTag = " + consumerTag );
 		    Tool.log("DeliverCallback : Current thread : " + Thread.currentThread().getName() 
 		    		+ "(" + Thread.currentThread().getId() + ")" );
 		    // pool-1-thread-2, pool-1-thread-3, pool-1-thread-4
-		    Tool.log("DeliverCallback : message = " + new String(message.getBody(), "UTF-8") );
+		    byte[] body = message.getBody();
+		    Tool.log("DeliverCallback : message = " + new String(body, "UTF-8") );
+		    BasicProperties msgProp = message.getProperties();
+		    if ( msgProp != null ) {
+			    Tool.log(" . message Priority : " + msgProp.getPriority() ); // Integer
+			    Tool.log(" . message ContentType : " + msgProp.getContentType() ); // String
+			    Tool.log(" . message UserId : " + msgProp.getUserId() ); // String
+
+			    Map<String,Object> headers = msgProp.getHeaders();
+			    if ( headers != null ) {
+				    Tool.log(". message headers : " );
+				    for (Map.Entry<String, Object> entry : headers.entrySet()) {
+				    	Tool.log("   ." + entry.getKey()+" : "+entry.getValue());
+				    }
+			    }
+			    else {
+				    Tool.log("DeliverCallback : no headers " );
+			    }
+		    }
+		    else {
+			    Tool.log("DeliverCallback : no properties " );
+		    }
 		    Tool.log("DeliverCallback : processing message..." );
-			sleep(1000L) ;
+			sleep(1000L) ; // simulation for message processing duration
 		};
 		
 	    CancelCallback cancelCallback = (consumerTag) -> {
