@@ -1,5 +1,6 @@
 package org.demo.rabbitmq.amqp;
 
+import java.io.IOException;
 import java.util.Map;
 
 import com.rabbitmq.client.BasicProperties;
@@ -7,7 +8,7 @@ import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DeliverCallback;
 
-public class BasicConsume {
+public class BasicConsumer1Lambdas {
 
 	public static void sleep(long n) {
 	    try {
@@ -17,13 +18,12 @@ public class BasicConsume {
 		}
 	}
 	
-	public static void main(String[] args) throws Exception {
-		Channel channel = Tool.getChannel();
+	public static String consume(Channel channel, String queueName) throws IOException {
 	    Tool.log("Starting consumer...");
 	    Tool.log("Current thread : " + Thread.currentThread().getName() 
 	    		+ "(" + Thread.currentThread().getId() + ")" );
 	    
-
+	    //------------------------------------------------------------------------------------
 		// DeliverCallback : Callback interface to be notified when a message is delivered
 	    // ( @FunctionalInterface ) for a lambda-oriented syntax
 		DeliverCallback deliverCallback = (consumerTag, message) -> {
@@ -60,25 +60,23 @@ public class BasicConsume {
 			sleep(1000L) ; // simulation for message processing duration
 		};
 		
+	    //------------------------------------------------------------------------------------
 		// CancelCallback : Callback interface to be notified of the cancellation of a consumer
 	    // ( @FunctionalInterface ) for a lambda-oriented syntax
 	    CancelCallback cancelCallback = (consumerTag) -> {
 	    	System.out.println(consumerTag);
 	    };		
 
-	    Tool.log("channel.basicConsume(..)...");
+	    //------------------------------------------------------------------------------------
+	    Tool.log("channel.basicConsume("+queueName+")...");
 		// . queue the name of the queue
 		// . autoAck true if the server should consider messages acknowledged once delivered; 
 		//          false if the server should expect explicit acknowledgements
 		// . deliverCallback callback when a message is delivered
 		// . cancelCallback callback when the consumer is cancelled
-		String consumerTag = channel.basicConsume("queue-test1", true, deliverCallback, cancelCallback);
+		String consumerTag = channel.basicConsume(queueName, true, deliverCallback, cancelCallback);
 		// channel.basicConsume : creates a thread pool and wait for messages 
 	    Tool.log("Consumer tag : " + consumerTag);
-
-		// if invalid exchange name : ShutdownSignalException : no exchange 'xxxx' in vhost '/',
-		
-	    // NB : do not close
-		// Tool.close(channel);
+	    return consumerTag;
 	}
 }
