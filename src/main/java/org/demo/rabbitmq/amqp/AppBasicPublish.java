@@ -6,7 +6,7 @@ import com.rabbitmq.client.Channel;
 public class AppBasicPublish {
 
 	public static void main(String[] args) throws Exception {
-		Channel channel = Tool.getChannel();
+		Channel channel = Tool.createChannel();
 		
 		// basicPublish() parameters :
 		// . exchange   : the exchange to publish the message to ( or "" for "default exchange" )

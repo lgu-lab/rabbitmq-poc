@@ -1,17 +1,13 @@
 package org.demo.rabbitmq.amqp;
 
-import java.util.Map;
-
-import com.rabbitmq.client.BasicProperties;
-import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.Connection;
 
 public class AppBasicConsumers {
 
 	public static void main(String[] args) throws Exception {
-	    Tool.log("Getting channel...");
-		Channel channel = Tool.getChannel();
+	    Tool.log("Creating connection...");
+	    Connection connection = Tool.createConnection();
 	    Tool.log("Current thread : " + Thread.currentThread().getName() 
 	    		+ "(" + Thread.currentThread().getId() + ")" );
 
@@ -30,7 +26,11 @@ public class AppBasicConsumers {
 //
 //		// if invalid exchange name : ShutdownSignalException : no exchange 'xxxx' in vhost '/',
 
-	    BasicConsumer1Lambdas.consume(channel, "queue-test1");
+	    Channel channel1 = connection.createChannel();
+	    BasicConsumer1Lambdas.consume(channel1, Names.QUEUE1);
+	    	    
+	    Channel channel2 = connection.createChannel();
+	    BasicConsumer1Lambdas.consume(channel2, Names.QUEUE2);
 		
 	    // NB : do not close
 		// Tool.close(channel);

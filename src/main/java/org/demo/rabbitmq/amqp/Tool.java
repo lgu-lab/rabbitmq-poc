@@ -26,7 +26,7 @@ public class Tool {
 		pause(null);
 	}
 	
-	public static Channel getChannel() throws TimeoutException, IOException {
+	public static Connection createConnection() throws IOException, TimeoutException  {
 		ConnectionFactory factory = new ConnectionFactory();
 		log("ConnectionFactory created.");
 		
@@ -34,7 +34,11 @@ public class Tool {
 		// Connection with default values : localhost, 5672
 		Connection connection = factory.newConnection("MyConnectionName");
 		log("Connection created.");
+		return connection;
+	}
 
+	public static Channel createChannel() throws TimeoutException, IOException {
+		Connection connection = createConnection();
 		Channel channel = connection.createChannel();
 		log("Channel created.");
 		return channel ;

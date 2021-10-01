@@ -9,7 +9,7 @@ import com.rabbitmq.client.Channel;
 public class AppInitRabbitMQ {
 
 	public static void main(String[] args) throws Exception {
-		Channel channel = Tool.getChannel();
+		Channel channel = Tool.createChannel();
 		
 	    //------------------------------------------------------------------------
 	    // EXCHANGE(S)
