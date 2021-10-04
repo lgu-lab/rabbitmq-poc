@@ -1,17 +1,25 @@
 package org.demo.rabbitmq.amqp.commons;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
 
+import com.rabbitmq.client.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Delivery;
 
 public class Tool {
 	
+	public static void println(String msg) {
+		System.out.println(msg);
+	}
+
 	public static void log(String msg) {
-		System.out.println("[LOG]" + msg);
+		println("[LOG]" + msg);
 	}
 	
 	private static final Scanner inScanner = new Scanner(System.in);	
@@ -50,5 +58,46 @@ public class Tool {
 		log("Channel closed.");
 		connection.close();
 		log("Connection closed.");
+	}
+
+	public static void printMessage(Delivery message) throws UnsupportedEncodingException {
+		printMessageBody(message);
+		printMessageProperties(message);
+	}
+	
+	public static String messageBodyAsString(Delivery message) throws UnsupportedEncodingException {
+	    byte[] body = message.getBody();
+	    return new String(body, "UTF-8");
+	}
+
+	public static void printMessageBody(Delivery message) throws UnsupportedEncodingException {
+	    println(". message body : " + messageBodyAsString(message) );
+	}
+	
+	public static void printMessageProperties(Delivery message) {
+	    BasicProperties msgProp = message.getProperties();
+	    // Spec AMQP : "Immutable properties of the message. MUST remain unaltered"
+	    // BasicProperties : getXxx only (no setXxx )
+    	println(". message properties : " );
+	    if ( msgProp != null ) {
+	    	println(". message properties : " );
+		    println(" . Priority : " + msgProp.getPriority() ); // Integer
+		    println(" . ContentType : " + msgProp.getContentType() ); // String
+		    println(" . UserId : " + msgProp.getUserId() ); // String
+
+		    Map<String,Object> headers = msgProp.getHeaders();
+		    if ( headers != null ) {
+		    	println(". message headers : " );
+			    for (Map.Entry<String, Object> entry : headers.entrySet()) {
+			    	println(" . '" + entry.getKey()+"' : " + entry.getValue());
+			    }
+		    }
+		    else {
+		    	println(". message headers : no headers (null)" );
+		    }
+	    }
+	    else {
+	    	println(". message properties : no properties (null)" );
+	    }
 	}
 }

@@ -37,4 +37,15 @@ public class Names {
 	
 	public static final String ROUTING_KEY_B = "routing-key-b" ;
 
+	//-----------------------------------------------------------------
+	// App4
+	//-----------------------------------------------------------------
+	public static final String EXCHANGE_QUEUE_C = "ex-direct-c" ;
+	public static final String QUEUE_C = "queue-c" ;
+
+	public static final String EXCHANGE_DLQ_C = "ex-dlq-c" ;
+	public static final String DLQ_C = "dlq-c" ;
+	
+	public static final String ROUTING_KEY_C = "routing-key-c" ;
+
 }
