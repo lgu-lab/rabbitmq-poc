@@ -1,11 +1,13 @@
-package org.demo.rabbitmq.amqp;
+package org.demo.rabbitmq.amqp.app0;
+
+import org.demo.rabbitmq.amqp.commons.Tool;
 
 import com.rabbitmq.client.Address;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public class AppConnectionTest {
+public class App0ConnectionTest {
 
 	public static void main(String[] args) throws Exception {
 		ConnectionFactory factory = new ConnectionFactory();

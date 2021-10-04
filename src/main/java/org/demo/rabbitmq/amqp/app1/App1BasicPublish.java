@@ -1,9 +1,12 @@
-package org.demo.rabbitmq.amqp;
+package org.demo.rabbitmq.amqp.app1;
+
+import org.demo.rabbitmq.amqp.commons.Names;
+import org.demo.rabbitmq.amqp.commons.Tool;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 
-public class AppBasicPublish {
+public class App1BasicPublish {
 
 	public static void main(String[] args) throws Exception {
 		Channel channel = Tool.createChannel();

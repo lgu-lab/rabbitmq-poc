@@ -1,4 +1,4 @@
-package org.demo.rabbitmq.amqp;
+package org.demo.rabbitmq.amqp.commons;
 
 import java.io.IOException;
 import java.util.Scanner;

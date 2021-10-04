@@ -1,9 +1,12 @@
-package org.demo.rabbitmq.amqp;
+package org.demo.rabbitmq.amqp.app1;
+
+import org.demo.rabbitmq.amqp.commons.Names;
+import org.demo.rabbitmq.amqp.commons.Tool;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
-public class AppBasicConsumers {
+public class App1BasicConsumers {
 
 	public static void main(String[] args) throws Exception {
 	    Tool.log("Creating connection...");

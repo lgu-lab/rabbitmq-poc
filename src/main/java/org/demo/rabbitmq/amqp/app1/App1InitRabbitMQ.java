@@ -1,15 +1,15 @@
-package org.demo.rabbitmq.amqp.app2;
+package org.demo.rabbitmq.amqp.app1;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.demo.rabbitmq.amqp.Names;
-import org.demo.rabbitmq.amqp.Tool;
+import org.demo.rabbitmq.amqp.commons.Names;
+import org.demo.rabbitmq.amqp.commons.Tool;
 
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 
-public class App2InitRabbitMQ {
+public class App1InitRabbitMQ {
 
 	public static void main(String[] args) throws Exception {
 		Channel channel = Tool.createChannel();
@@ -25,8 +25,7 @@ public class App2InitRabbitMQ {
 		//  . type the exchange type
 		//  . durable true if we are declaring a durable exchange (the exchange will survive a server restart)
 		// Throws: java.io.IOException - if an error is encountered
-	    channel.exchangeDeclare(Names.EXCHANGE_QUEUE_A, BuiltinExchangeType.DIRECT, true);
-	    channel.exchangeDeclare(Names.EXCHANGE_DLQ_A,   BuiltinExchangeType.DIRECT, true);
+	    channel.exchangeDeclare(Names.EXCHANGE_DIRECT1, BuiltinExchangeType.DIRECT, true);
 	     
 	    //------------------------------------------------------------------------
 	    // QUEUE(S)
@@ -41,20 +40,15 @@ public class App2InitRabbitMQ {
 		//  . arguments : other properties (construction arguments) for the queue
 		// Throws: java.io.IOException - if an error is encountered
 		// NB : default type is "classic" => use arguments to set another type
-		Map<String, Object> arguments;
-		
-		arguments = new HashMap<>();
-		arguments.put("x-queue-type", "quorum"); 
-		arguments.put("x-dead-letter-exchange", Names.EXCHANGE_DLQ_A);
-		arguments.put("x-max-length", Integer.valueOf(10)); // Maximum 10 messages
-		// NB : No message TTL in a "QUORUM" queue (ok with "CLASSIC" queue
-		// arguments.put("x-message-ttl", Integer.valueOf(2000)); // TTL = 2 sec 
-		// "x-dead-letter-routing-key" no set => keep original routing key
-		channel.queueDeclare(Names.QUEUE_A, true, false, false, arguments);
-		
-		arguments = new HashMap<>();
-		arguments.put("x-queue-type", "quorum"); 
-		channel.queueDeclare(Names.DLQ_A,   true, false, false, arguments);
+		Map<String, Object> queueArguments = new HashMap<>();
+		queueArguments.put("x-queue-type", "quorum"); 
+		channel.queueDeclare(Names.QUEUE1, true, false, false, queueArguments);
+		channel.queueDeclare(Names.QUEUE2, true, false, false, queueArguments);
+		channel.queueDeclare(Names.QUEUE3, true, false, false, queueArguments);
+	    // If already exists with another type 
+	    // ERROR : :inequivalent arg 'x-queue-type' for queue 'queue-test3' in vhost '/':
+	    // received the value 'quorum' of type 'longstr' but current is none
+		//Tool.pause("Queues created.");
 
 	    //------------------------------------------------------------------------
 	    // BINDING(S)
@@ -66,12 +60,14 @@ public class App2InitRabbitMQ {
 		// . exchange the name of the exchange
 		// . routingKey the routing key to use for the binding
 		// Throws: java.io.IOException - if an error is encountered
-//		Map<String, Object> bindingArguments = new HashMap<>();
-//		channel.queueBind(Names.QUEUE_A, Names.EXCHANGE_QUEUE_A, Names.ROUTING_KEY_A, bindingArguments);
-//		channel.queueBind(Names.DLQ_A,   Names.EXCHANGE_DLQ_A,   Names.ROUTING_KEY_A, bindingArguments);
-		channel.queueBind(Names.QUEUE_A, Names.EXCHANGE_QUEUE_A, Names.ROUTING_KEY_A);
-		channel.queueBind(Names.DLQ_A,   Names.EXCHANGE_DLQ_A,   Names.ROUTING_KEY_A);
+		channel.queueBind(Names.QUEUE1, Names.EXCHANGE_DIRECT1, Names.ROUTING_KEY1);
+		channel.queueBind(Names.QUEUE2, Names.EXCHANGE_DIRECT1, Names.ROUTING_KEY2);
 
+		Map<String, Object> bindingArguments = new HashMap<>();
+		channel.queueBind(Names.QUEUE3, Names.EXCHANGE_DIRECT1, Names.ROUTING_KEY1, bindingArguments);
+		channel.queueBind(Names.QUEUE3, Names.EXCHANGE_DIRECT1, Names.ROUTING_KEY2, bindingArguments);
+		//Tool.pause("Binding created.");
+		
 		Tool.close(channel);
 	}
 }

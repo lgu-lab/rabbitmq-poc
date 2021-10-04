@@ -1,7 +1,9 @@
-package org.demo.rabbitmq.amqp;
+package org.demo.rabbitmq.amqp.app1;
 
 import java.io.IOException;
 import java.util.Map;
+
+import org.demo.rabbitmq.amqp.commons.Tool;
 
 import com.rabbitmq.client.BasicProperties;
 import com.rabbitmq.client.CancelCallback;
