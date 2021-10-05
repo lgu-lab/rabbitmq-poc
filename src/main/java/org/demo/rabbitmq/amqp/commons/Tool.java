@@ -42,6 +42,9 @@ public class Tool {
 
 //		Connection connection = factory.newConnection(Config.AMQP_URL);
 		// Connection with default values : localhost, 5672
+		factory.setHost("localhost");
+		factory.setPort(5672);
+		factory.setVirtualHost("/");
 		Connection connection = factory.newConnection("MyConnectionName");
 		log("Connection created.");
 		return connection;
@@ -77,7 +80,10 @@ public class Tool {
 	}
 
 	public static void printMessageBody(byte[] body) throws UnsupportedEncodingException {
-		println(". message body : " + new String(body, "UTF-8"));
+		printMessageBody( new String(body, "UTF-8") );
+	}
+	public static void printMessageBody(String body) throws UnsupportedEncodingException {
+		println(". message body : " + body );
 	}
 
 	public static void printMessageProperties(Delivery message) {
